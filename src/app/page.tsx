@@ -6,7 +6,7 @@ import { uploadDocument } from '@/lib/api'
 import { useDocumentHistory } from '@/lib/useDocumentHistory'
 import { useAuthStore } from '@/store/authStore'
 
-const AUTH_URL = 'https://c4dac4a814a5.ngrok-free.app/auth/google/login'
+const AUTH_URL = `${process.env.NEXT_PUBLIC_BACKEND_URL || 'https://vparu.kz'}/auth/google/login`
 
 // Helper to get formatted session name (e.g., "November 16th")
 function getSessionName(): string {
