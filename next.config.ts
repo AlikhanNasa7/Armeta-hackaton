@@ -6,11 +6,11 @@ const nextConfig: NextConfig = {
     domains: [
       'c4dac4a814a5.ngrok-free.app',
       'lh3.googleusercontent.com',
-      'https://vparu.kz',
+      'vparu.kz',
     ],
   },
   typescript: {
-    ignoreBuildErrors: true
+    ignoreBuildErrors: true,
   },
 }
 export default nextConfig
