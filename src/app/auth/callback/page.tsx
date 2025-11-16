@@ -15,13 +15,11 @@ export default function AuthCallbackPage() {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const response = await fetch(`${BACKEND_URL}/me`, {
+        const response = await fetch('/api/proxy/me', {
           method: 'GET',
           credentials: 'include',
-          mode: 'cors',
           headers: {
             'Content-Type': 'application/json',
-            'ngrok-skip-browser-warning': 'true',
           },
         })
 

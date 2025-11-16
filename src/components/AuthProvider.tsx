@@ -16,13 +16,11 @@ export default function AuthProvider({
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch(`${BACKEND_URL}/me`, {
+        const response = await fetch('/api/proxy/me', {
           method: 'GET',
           credentials: 'include',
-          mode: 'cors',
           headers: {
             'Content-Type': 'application/json',
-            'ngrok-skip-browser-warning': 'true',
           },
         })
 

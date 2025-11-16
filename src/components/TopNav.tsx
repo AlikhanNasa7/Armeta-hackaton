@@ -22,13 +22,10 @@ export default function TopNav() {
   const handleSignOut = async () => {
     try {
       // Call backend logout endpoint
-      await fetch(`${BACKEND_URL}/auth/logout`, {
+      await fetch('/api/proxy/auth/logout', {
         method: 'GET',
         credentials: 'include',
-        mode: 'cors',
-        headers: {
-          'ngrok-skip-browser-warning': 'true',
-        },
+        headers: {},
       })
 
       // Clear local auth state
