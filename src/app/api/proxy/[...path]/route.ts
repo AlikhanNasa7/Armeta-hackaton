@@ -2,42 +2,51 @@ import { NextRequest, NextResponse } from 'next/server'
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://vparu.kz'
 
+// Ensure this route is dynamic
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+
 /**
  * Next.js API route handler that proxies requests to the backend
  * This bypasses CORS restrictions since requests come from the server
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { path: string[] } }
+  context: { params: Promise<{ path: string[] }> | { path: string[] } }
 ) {
+  const params = await Promise.resolve(context.params)
   return handleRequest(request, params, 'GET')
 }
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { path: string[] } }
+  context: { params: Promise<{ path: string[] }> | { path: string[] } }
 ) {
+  const params = await Promise.resolve(context.params)
   return handleRequest(request, params, 'POST')
 }
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { path: string[] } }
+  context: { params: Promise<{ path: string[] }> | { path: string[] } }
 ) {
+  const params = await Promise.resolve(context.params)
   return handleRequest(request, params, 'PATCH')
 }
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { path: string[] } }
+  context: { params: Promise<{ path: string[] }> | { path: string[] } }
 ) {
+  const params = await Promise.resolve(context.params)
   return handleRequest(request, params, 'PUT')
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { path: string[] } }
+  context: { params: Promise<{ path: string[] }> | { path: string[] } }
 ) {
+  const params = await Promise.resolve(context.params)
   return handleRequest(request, params, 'DELETE')
 }
 
@@ -50,13 +59,18 @@ async function handleRequest(
     // Reconstruct the backend path
     const path = Array.isArray(params.path)
       ? params.path.join('/')
-      : params.path
+      : String(params.path || '')
+
+    console.log('Proxy request:', { path, method, params })
+
     const url = new URL(request.url)
     const queryString = url.search
 
     const backendUrl = `${BACKEND_URL}/${path}${
       queryString ? `?${queryString}` : ''
     }`
+
+    console.log('Proxying to:', backendUrl)
 
     // Prepare headers
     const headers: HeadersInit = {
