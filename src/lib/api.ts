@@ -1,18 +1,6 @@
 import { DetectionType, DocumentDetail, SessionFilteredFile } from './types'
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://vparu.kz'
-
-/**
- * Get the API URL - use proxy in browser to avoid CORS, direct URL on server
- */
-function getApiUrl(path: string): string {
-  // In browser, use Next.js API proxy to avoid CORS
-  if (typeof window !== 'undefined') {
-    return `/api/proxy/${path}`
-  }
-  // On server, use direct backend URL
-  return `${BACKEND_URL}/${path}`
-}
 const FALLBACK_PAGE_WIDTH = 2480 // Approx A4 at 300 DPI
 const FALLBACK_PAGE_HEIGHT = 3508
 
@@ -97,10 +85,11 @@ export async function uploadDocument(data: {
   })
   formData.append('session_name', sessionName || getSessionName())
 
-  const response = await fetch(getApiUrl('process-pdfs'), {
+  const response = await fetch(`${BACKEND_URL}/process-pdfs`, {
     method: 'POST',
     credentials: 'include',
     headers: {
+      'ngrok-skip-browser-warning': 'true',
       Accept: 'application/json',
     },
     body: formData,
@@ -177,11 +166,13 @@ export async function fetchDocument(
 ): Promise<DocumentDetail> {
   console.log('📄 Fetching document:', documentId)
 
-  const response = await fetch(getApiUrl(`files/${documentId}`), {
+  const response = await fetch(`${BACKEND_URL}/files/${documentId}`, {
     method: 'GET',
     credentials: 'include',
+    mode: 'cors',
     headers: {
       'Content-Type': 'application/json',
+      'ngrok-skip-browser-warning': 'true',
     },
   })
 
@@ -360,11 +351,13 @@ export interface Session {
 }
 
 export async function fetchSessions(): Promise<Session[]> {
-  const response = await fetch(getApiUrl('sessions'), {
+  const response = await fetch(`${BACKEND_URL}/sessions`, {
     method: 'GET',
     credentials: 'include',
+    mode: 'cors',
     headers: {
       'Content-Type': 'application/json',
+      'ngrok-skip-browser-warning': 'true',
     },
   })
 
@@ -380,11 +373,13 @@ export async function fetchFileSummary(fileId: string): Promise<{
   filename: string
   analysis: string
 }> {
-  const response = await fetch(getApiUrl(`files/${fileId}/summary`), {
+  const response = await fetch(`${BACKEND_URL}/files/${fileId}/summary`, {
     method: 'GET',
     credentials: 'include',
+    mode: 'cors',
     headers: {
       'Content-Type': 'application/json',
+      'ngrok-skip-browser-warning': 'true',
     },
   })
 
@@ -414,13 +409,17 @@ export async function fetchSessionFiles(
     }
   })
   const query = params.toString()
-  const url = getApiUrl(`files/session/${sessionId}${query ? `?${query}` : ''}`)
+  const url = `${BACKEND_URL}/files/session/${sessionId}${
+    query ? `?${query}` : ''
+  }`
 
   const response = await fetch(url, {
     method: 'GET',
     credentials: 'include',
+    mode: 'cors',
     headers: {
       'Content-Type': 'application/json',
+      'ngrok-skip-browser-warning': 'true',
     },
   })
 
@@ -466,11 +465,13 @@ export async function updateSessionName(
   sessionId: number,
   name: string
 ): Promise<Session> {
-  const response = await fetch(getApiUrl(`sessions/${sessionId}`), {
+  const response = await fetch(`${BACKEND_URL}/sessions/${sessionId}`, {
     method: 'PATCH',
     credentials: 'include',
+    mode: 'cors',
     headers: {
       'Content-Type': 'application/json',
+      'ngrok-skip-browser-warning': 'true',
     },
     body: JSON.stringify({ name }),
   })
@@ -489,10 +490,13 @@ export async function uploadFileToSession(
   const formData = new FormData()
   formData.append('file', file)
 
-  const response = await fetch(getApiUrl(`files/upload/${sessionId}`), {
+  const response = await fetch(`${BACKEND_URL}/files/upload/${sessionId}`, {
     method: 'POST',
     credentials: 'include',
-    headers: {},
+    mode: 'cors',
+    headers: {
+      'ngrok-skip-browser-warning': 'true',
+    },
     body: formData,
   })
 
